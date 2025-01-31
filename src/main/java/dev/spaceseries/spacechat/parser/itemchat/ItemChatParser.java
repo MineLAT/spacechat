@@ -33,7 +33,7 @@ import java.util.*;
                 repository = @Repository(url = "https://repo.codemc.io/repository/maven-public"),
                 relocate = {"me.pikamug.localelib", "{package}.lib.localelib"}
         ),
-        @Dependency(value = "com.saicone.rtag:rtag-item:1.5.6",
+        @Dependency(value = "com.saicone.rtag:rtag-item:1.5.9",
                 repository = @Repository(url = "https://jitpack.io"),
                 relocate = {"com.saicone.rtag", "{package}.lib.rtag"}
         )
