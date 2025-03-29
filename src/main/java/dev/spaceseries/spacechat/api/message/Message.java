@@ -19,12 +19,13 @@ import java.util.List;
 @Dependencies(value = {
         // Non-paper servers
         @Dependency(
-                value = "net.kyori:adventure-api:4.18.0",
+                value = "net.kyori:adventure-api:4.19.0",
                 repository = @Repository(url = "MavenCentral"),
                 condition = "paper=false",
                 relocate = {
                         "net.kyori.adventure", "{package}.lib.adventure",
-                        "net.kyori.examination", "{package}.lib.examination"
+                        "net.kyori.examination", "{package}.lib.examination",
+                        "net.kyori.option", "{package}.lib.option"
                 }
         ),
         @Dependency(
@@ -33,16 +34,18 @@ import java.util.List;
                 condition = "paper=false",
                 relocate = {
                         "net.kyori.adventure", "{package}.lib.adventure",
-                        "net.kyori.examination", "{package}.lib.examination"
+                        "net.kyori.examination", "{package}.lib.examination",
+                        "net.kyori.option", "{package}.lib.option"
                 }
         ),
         @Dependency(
-                value = "net.kyori:adventure-text-minimessage:4.18.0",
+                value = "net.kyori:adventure-text-minimessage:4.19.0",
                 repository = @Repository(url = "MavenCentral"),
                 condition = "paper=false",
                 relocate = {
                         "net.kyori.adventure", "{package}.lib.adventure",
-                        "net.kyori.examination", "{package}.lib.examination"
+                        "net.kyori.examination", "{package}.lib.examination",
+                        "net.kyori.option", "{package}.lib.option"
                 }
         )
 })

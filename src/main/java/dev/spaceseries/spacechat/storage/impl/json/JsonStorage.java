@@ -13,7 +13,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import java.time.Instant;
 import java.util.*;
 
-@Dependency(value = "org.spongepowered:configurate-gson:4.1.2",
+@Dependency(value = "org.spongepowered:configurate-gson:4.2.0",
         relocate = {
                 "org.spongepowered.configurate", "{package}.lib.configurate",
                 "io.leangen.geantyref", "{package}.lib.geantyref",
