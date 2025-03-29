@@ -247,15 +247,20 @@ public class ItemChatParser extends Parser {
             final Object components = compound.get("components");
             if (components != null) {
                 for (Map.Entry<String, Object> entry : TagCompound.getValue(components).entrySet()) {
+                    if (entry.getKey().equals("minecraft:custom_data")) {
+                        continue;
+                    }
                     map.put(Key.key(entry.getKey()), BinaryTagHolder.binaryTagHolder(entry.getValue().toString()));
                 }
             }
             return HoverEvent.showItem(HoverEvent.ShowItem.showItem(key, item.getAmount(), map));
         } else {
             Object tag = compound.get("tag");
-            final Set<String> allowedTags;
+            final DataPath allowedTags;
             if (tag != null && !(allowedTags = SpaceChatConfigKeys.ITEM_CHAT_ALLOWED_TAGS.get(configuration)).isEmpty()) {
-                TagCompound.getValue(tag).entrySet().removeIf(entry -> !allowedTags.contains(entry.getKey()));
+                if (!ItemDataFilter.filter(tag, allowedTags)) {
+                    tag = null;
+                }
             }
             return HoverEvent.showItem(key, item.getAmount(), tag == null ? null : BinaryTagHolder.binaryTagHolder(tag.toString()));
         }

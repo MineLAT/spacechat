@@ -157,7 +157,12 @@ public class ItemChatParser extends Parser {
             hoverEvent = HoverEvent.showText(loreBuilder.build());
         } else {
             // show item
-            hoverEvent = itemStack.asHoverEvent();
+            final DataPath allowedTags;
+            if (!(allowedTags = SpaceChatConfigKeys.ITEM_CHAT_ALLOWED_TAGS.get(configuration)).isEmpty()) {
+                hoverEvent = ItemDataFilter.filterItem(itemStack, allowedTags).asHoverEvent();
+            } else {
+                hoverEvent = itemStack.asHoverEvent();
+            }
         }
 
         itemMessage = itemMessage.hoverEvent(hoverEvent);
