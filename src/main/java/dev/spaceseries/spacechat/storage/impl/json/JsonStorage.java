@@ -18,7 +18,8 @@ import java.util.*;
                 "org.spongepowered.configurate", "{package}.lib.configurate",
                 "io.leangen.geantyref", "{package}.lib.geantyref",
                 "org.checkerframework", "{package}.lib.checkerframework",
-                "com.google.errorprone.annotations", "{package}.lib.annotations.errorprone"
+                "com.google.errorprone.annotations", "{package}.lib.annotations.errorprone",
+                "net.kyori.option", "{package}.lib.option"
         }
 )
 public class JsonStorage extends Storage {
