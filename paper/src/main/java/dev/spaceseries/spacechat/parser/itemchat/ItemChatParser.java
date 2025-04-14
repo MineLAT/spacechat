@@ -3,6 +3,8 @@ package dev.spaceseries.spacechat.parser.itemchat;
 import com.saicone.ezlib.Dependencies;
 import com.saicone.ezlib.Dependency;
 import com.saicone.ezlib.Repository;
+import com.saicone.rtag.item.ItemObject;
+import com.saicone.rtag.util.ServerInstance;
 import dev.spaceseries.spacechat.SpaceChatPlugin;
 import dev.spaceseries.spacechat.api.config.generic.adapter.ConfigurationAdapter;
 import dev.spaceseries.spacechat.config.SpaceChatConfigKeys;
@@ -158,7 +160,16 @@ public class ItemChatParser extends Parser {
         } else {
             // show item
             final DataPath allowedTags;
-            if (!(allowedTags = SpaceChatConfigKeys.ITEM_CHAT_ALLOWED_TAGS.get(configuration)).isEmpty()) {
+            if (ServerInstance.Release.COMPONENT) {
+                final Object handle = ItemObject.getHandle(itemStack);
+                if (ItemObject.hasCustomData(handle)) {
+                    final Object copy = ItemObject.copy(handle);
+                    ItemObject.setCustomDataTag(copy, null);
+                    hoverEvent = ItemObject.asCraftMirror(copy).asHoverEvent();
+                } else {
+                    hoverEvent = itemStack.asHoverEvent();
+                }
+            } else if (!(allowedTags = SpaceChatConfigKeys.ITEM_CHAT_ALLOWED_TAGS.get(configuration)).isEmpty()) {
                 hoverEvent = ItemDataFilter.filterItem(itemStack, allowedTags).asHoverEvent();
             } else {
                 hoverEvent = itemStack.asHoverEvent();
