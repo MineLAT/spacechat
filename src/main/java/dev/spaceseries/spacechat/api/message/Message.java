@@ -19,7 +19,7 @@ import java.util.List;
 @Dependencies(value = {
         // Non-paper servers
         @Dependency(
-                value = "net.kyori:adventure-api:4.19.0",
+                value = "net.kyori:adventure-api:4.21.0",
                 repository = @Repository(url = "MavenCentral"),
                 condition = "paper=false",
                 relocate = {
@@ -39,7 +39,7 @@ import java.util.List;
                 }
         ),
         @Dependency(
-                value = "net.kyori:adventure-text-minimessage:4.19.0",
+                value = "net.kyori:adventure-text-minimessage:4.21.0",
                 repository = @Repository(url = "MavenCentral"),
                 condition = "paper=false",
                 relocate = {
