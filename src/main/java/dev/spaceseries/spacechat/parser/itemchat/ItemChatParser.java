@@ -77,6 +77,7 @@ public class ItemChatParser extends Parser {
         for (String s : SpaceChatConfigKeys.ITEM_CHAT_REPLACE_ALIASES.get(configuration)) {
             if (componentContains(message, s)) {
                 containsItemChatAliases = true;
+                break;
             }
         }
 
@@ -244,15 +245,9 @@ public class ItemChatParser extends Parser {
 
         if (ServerInstance.Release.COMPONENT) {
             final Map<Key, DataComponentValue> map = new HashMap<>();
-            final Object components = compound.get("components");
-            if (components != null) {
-                for (Map.Entry<String, Object> entry : TagCompound.getValue(components).entrySet()) {
-                    if (entry.getKey().equals("minecraft:custom_data")) {
-                        continue;
-                    }
-                    map.put(Key.key(entry.getKey()), BinaryTagHolder.binaryTagHolder(entry.getValue().toString()));
-                }
-            }
+            ItemDataFilter.filterItemComponents(compound, (component, value) -> {
+                map.put(Key.key(component), BinaryTagHolder.binaryTagHolder(value.toString()));
+            });
             return HoverEvent.showItem(HoverEvent.ShowItem.showItem(key, item.getAmount(), map));
         } else {
             Object tag = compound.get("tag");
