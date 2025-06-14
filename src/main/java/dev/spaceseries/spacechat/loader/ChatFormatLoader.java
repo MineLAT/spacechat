@@ -2,7 +2,6 @@ package dev.spaceseries.spacechat.loader;
 
 import dev.spaceseries.spacechat.SpaceChatPlugin;
 import dev.spaceseries.spacechat.api.config.generic.adapter.ConfigurationAdapter;
-import dev.spaceseries.spacechat.api.wrapper.Trio;
 import dev.spaceseries.spacechat.builder.chatformat.ChatFormatBuilder;
 import dev.spaceseries.spacechat.model.formatting.ChatFormat;
 
@@ -28,7 +27,7 @@ public class ChatFormatLoader extends FormatLoader<ChatFormat> {
         for (String handle : adapter.getKeys(formatsSection, new ArrayList<>())) {
 
             // add to manager
-            formatManager.add(handle, new ChatFormatBuilder().build(new Trio<>(formatsSection + "." + handle, handle, adapter)));
+            formatManager.add(handle, new ChatFormatBuilder().build(formatsSection + "." + handle, handle, adapter));
         }
     }
 }
