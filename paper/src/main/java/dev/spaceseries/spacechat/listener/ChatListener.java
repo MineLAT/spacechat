@@ -6,9 +6,9 @@ import dev.spaceseries.spacechat.model.Channel;
 import dev.spaceseries.spacechat.replacer.SectionReplacer;
 import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.RemoteConsoleCommandSender;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,29 +33,26 @@ public class ChatListener implements Listener {
         if (player == null) {
             return;
         }
-        boolean edited = false;
-        String message = null;
+        Component result = escapeMiniMessage(event.result());
+        String message = SECTION_REPLACER.apply(MiniMessage.miniMessage().serialize(result), player);
         if (player.hasPermission(SpaceChatConfigKeys.PERMISSIONS_USE_CHAT_COLORS.get(plugin.getSpaceChatConfig().getAdapter()))) {
-            message = SECTION_REPLACER.apply(MiniMessage.miniMessage().serialize(event.result()), player);
             // yes, the player has permission to use chat colors, so color message
             if (message.contains("&")) {
                 message = color(message);
-                edited = true;
             }
         }
         if (player.hasPermission(SpaceChatConfigKeys.PERMISSIONS_USE_CHAT_LINKS.get(plugin.getSpaceChatConfig().getAdapter()))) {
-            if (message == null) {
-                message = SECTION_REPLACER.apply(MiniMessage.miniMessage().serialize(event.result()), player);
-            }
             if (message.contains("http")) {
                 message = urls(message);
-                edited = true;
             }
         }
 
-        if (edited) {
-            event.result(MiniMessage.miniMessage().deserialize(message));
-        }
+        event.result(MiniMessage.miniMessage().deserialize(message));
+    }
+
+    private static Component escapeMiniMessage(Component component) {
+        final String json = GsonComponentSerializer.gson().serialize(component);
+        return GsonComponentSerializer.gson().deserialize(MiniMessage.miniMessage().escapeTags(json));
     }
 
     private static String color(String s) {
@@ -161,8 +158,8 @@ public class ChatListener implements Listener {
     public void onPlayerAsyncChat(AsyncChatEvent event) {
         if (event.isCancelled()) return;
 
-        // clear viewers to "cancel"
-        event.viewers().removeIf(viewer -> !(viewer instanceof ConsoleCommandSender) && !(viewer instanceof RemoteConsoleCommandSender));
+        // clear viewers to "cancel", but also maintain console viewer
+        event.viewers().removeIf(viewer -> viewer instanceof Player);
 
         final Player player = event.getPlayer();
 
