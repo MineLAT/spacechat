@@ -8,13 +8,10 @@ import dev.spaceseries.spacechat.api.config.generic.key.SimpleConfigKey;
 import dev.spaceseries.spacechat.parser.itemchat.DataPath;
 import dev.spaceseries.spacechat.storage.impl.sql.mysql.StorageCredentials;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static dev.spaceseries.spacechat.api.config.generic.key.ConfigKeyFactory.key;
-import static dev.spaceseries.spacechat.api.config.generic.key.ConfigKeyFactory.memoize;
 import static dev.spaceseries.spacechat.api.config.generic.key.ConfigKeyFactory.notReloadable;
 
 public class SpaceChatConfigKeys {
@@ -82,6 +79,7 @@ public class SpaceChatConfigKeys {
     public static ConfigKey<List<String>> FAKE_PLAYERS = key(c -> c.getStringList("fake-players", List.of()));
 
     public static ConfigKey<XSound> PRIVATE_NOTIFICATION_SOUND = key(c -> XSound.matchXSound(c.getString("private.notification.sound", "ENTITY_PLAYER_LEVELUP")).orElse(XSound.ENTITY_PLAYER_LEVELUP));
+    public static ConfigKey<Long> PRIVATE_COOLDOWN = key(c -> c.getLong("private.cooldown", 2000L));
 
     private static final List<SimpleConfigKey<?>> KEYS = KeyedConfiguration.initialise(SpaceChatConfigKeys.class);
 
