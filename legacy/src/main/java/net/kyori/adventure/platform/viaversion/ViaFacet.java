@@ -23,9 +23,11 @@
  */
 package net.kyori.adventure.platform.viaversion;
 
+import com.viaversion.nbt.tag.Tag;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.Protocol;
+import com.viaversion.viaversion.api.protocol.ProtocolManager;
 import com.viaversion.viaversion.api.protocol.packet.PacketType;
 import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
@@ -34,16 +36,33 @@ import com.viaversion.viaversion.libs.gson.JsonElement;
 import com.viaversion.viaversion.libs.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.viaversion.viaversion.protocols.v1_10to1_11.Protocol1_10To1_11;
+import com.viaversion.viaversion.protocols.v1_11_1to1_12.data.TranslateRewriter;
+import com.viaversion.viaversion.protocols.v1_12_2to1_13.Protocol1_12_2To1_13;
+import com.viaversion.viaversion.protocols.v1_13_2to1_14.Protocol1_13_2To1_14;
+import com.viaversion.viaversion.protocols.v1_13_2to1_14.rewriter.ComponentRewriter1_14;
 import com.viaversion.viaversion.protocols.v1_15_2to1_16.Protocol1_15_2To1_16;
 import com.viaversion.viaversion.protocols.v1_15_2to1_16.packet.ClientboundPackets1_16;
+import com.viaversion.viaversion.protocols.v1_16_4to1_17.Protocol1_16_4To1_17;
+import com.viaversion.viaversion.protocols.v1_17_1to1_18.Protocol1_17_1To1_18;
+import com.viaversion.viaversion.protocols.v1_18_2to1_19.Protocol1_18_2To1_19;
+import com.viaversion.viaversion.protocols.v1_19_1to1_19_3.Protocol1_19_1To1_19_3;
+import com.viaversion.viaversion.protocols.v1_20_3to1_20_5.Protocol1_20_3To1_20_5;
+import com.viaversion.viaversion.protocols.v1_20_5to1_21.Protocol1_20_5To1_21;
+import com.viaversion.viaversion.protocols.v1_21_2to1_21_4.Protocol1_21_2To1_21_4;
+import com.viaversion.viaversion.protocols.v1_21_4to1_21_5.Protocol1_21_4To1_21_5;
+import com.viaversion.viaversion.protocols.v1_21_5to1_21_6.Protocol1_21_5To1_21_6;
+import com.viaversion.viaversion.protocols.v1_21to1_21_2.Protocol1_21To1_21_2;
 import com.viaversion.viaversion.protocols.v1_8to1_9.Protocol1_8To1_9;
 import com.viaversion.viaversion.protocols.v1_8to1_9.packet.ClientboundPackets1_9;
 import com.viaversion.viaversion.protocols.v1_9_1to1_9_3.packet.ClientboundPackets1_9_3;
@@ -53,12 +72,13 @@ import net.kyori.adventure.platform.facet.Facet;
 import net.kyori.adventure.platform.facet.FacetBase;
 import net.kyori.adventure.platform.facet.Knob;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.json.JSONOptions;
+import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.platform.facet.Knob.logError;
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.colorDownsamplingGson;
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson;
 
 // Non-API
 @SuppressWarnings({"checkstyle:FilteringWriteTag", "checkstyle:MissingJavadocType", "checkstyle:MissingJavadocMethod"})
@@ -80,14 +100,41 @@ public class ViaFacet<V> extends FacetBase<V> implements Facet.Message<V, String
     }
 
     private final Function<V, UserConnection> connectionFunction;
-    private final ProtocolVersion hexColorProtocol;
-    private final ProtocolVersion minProtocol;
+    protected final ProtocolVersion minProtocol;
+    private final GsonComponentSerializer componentSerializer;
 
     public ViaFacet(final @NotNull Class<? extends V> viewerClass, final @NotNull Function<V, UserConnection> connectionFunction, final String minProtocol) {
         super(viewerClass);
         this.connectionFunction = connectionFunction;
-        this.hexColorProtocol = ProtocolVersion.getClosest(PROTOCOL_HEX_COLOR);
         this.minProtocol = ProtocolVersion.getClosest(minProtocol);
+        if (this.minProtocol == null) {
+            this.componentSerializer = null;
+        } else if (this.minProtocol.olderThan(ProtocolVersion.v1_16)) {
+            this.componentSerializer = GsonComponentSerializer.colorDownsamplingGson();
+        } else {
+            int version = protocolToDataVersion(this.minProtocol.getVersion());
+            this.componentSerializer = GsonComponentSerializer.builder()
+                    .options(JSONOptions.byDataVersion().at(version))
+                    .editOptions(builder -> builder.value(JSONOptions.EMIT_HOVER_EVENT_TYPE, JSONOptions.HoverEventValueMode.VALUE_FIELD))
+                    .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.get())
+                    .build();
+        }
+    }
+
+    private static int protocolToDataVersion(int protocol) {
+        if (protocol >= 771) { // 1.21.6
+            return 4422;
+        } else if (protocol >= 770) { // 1.21.5
+            return 4298;
+        } else if (protocol >= 769) { // 1.21.4
+            return 4174;
+        } else if (protocol >= 766) { // 1.20.5
+            return 3819;
+        } else if (protocol >= 765) { // 1.20.3
+            return 3679;
+        } else { // 1.16
+            return 2526;
+        }
     }
 
     @Override
@@ -95,7 +142,7 @@ public class ViaFacet<V> extends FacetBase<V> implements Facet.Message<V, String
         return super.isSupported()
                 && SUPPORTED
                 && this.connectionFunction != null
-                && this.minProtocol.isKnown();
+                && this.minProtocol != null && this.minProtocol.isKnown();
     }
 
     @Override
@@ -120,11 +167,76 @@ public class ViaFacet<V> extends FacetBase<V> implements Facet.Message<V, String
     @NotNull
     @Override
     public String createMessage(final @NotNull V viewer, final @NotNull Component message) {
-        final ProtocolVersion protocol = this.findProtocol(viewer);
-        if (protocol.newerThanOrEqualTo(this.hexColorProtocol)) {
-            return gson().serialize(message);
-        } else {
-            return colorDownsamplingGson().serialize(message);
+        return componentSerializer.serialize(message);
+    }
+
+    private static class ComponentRewriter {
+
+        private static final Map<ProtocolVersion, BiConsumer<UserConnection, JsonElement>> TEXT_REWRITER = new LinkedHashMap<>();
+        private static final Map<ProtocolVersion, BiConsumer<UserConnection, Tag>> TAG_REWRITER = new LinkedHashMap<>();
+
+        static {
+            if (ViaFacet.SUPPORTED) {
+                try {
+                    // Populate until last supported version (This method )
+                    TEXT_REWRITER.put(ProtocolVersion.v1_12, TranslateRewriter::toClient);
+                    final ProtocolManager manager = Via.getManager().getProtocolManager();
+                    text(ProtocolVersion.v1_13, manager.getProtocol(Protocol1_12_2To1_13.class).getComponentRewriter());
+                    text(ProtocolVersion.v1_14, new ComponentRewriter1_14(manager.getProtocol(Protocol1_13_2To1_14.class)));
+                    text(ProtocolVersion.v1_16, manager.getProtocol(Protocol1_15_2To1_16.class).getComponentRewriter());
+                    text(ProtocolVersion.v1_17, manager.getProtocol(Protocol1_16_4To1_17.class).getComponentRewriter());
+                    text(ProtocolVersion.v1_18, manager.getProtocol(Protocol1_17_1To1_18.class).getComponentRewriter());
+                    text(ProtocolVersion.v1_19, manager.getProtocol(Protocol1_18_2To1_19.class).getComponentRewriter());
+                    text(ProtocolVersion.v1_19_3, manager.getProtocol(Protocol1_19_1To1_19_3.class).getComponentRewriter());
+
+                    tag(ProtocolVersion.v1_20_5, manager.getProtocol(Protocol1_20_3To1_20_5.class).getComponentRewriter());
+                    tag(ProtocolVersion.v1_21, manager.getProtocol(Protocol1_20_5To1_21.class).getComponentRewriter());
+                    tag(ProtocolVersion.v1_21_2, manager.getProtocol(Protocol1_21To1_21_2.class).getComponentRewriter());
+                    tag(ProtocolVersion.v1_21_4, manager.getProtocol(Protocol1_21_2To1_21_4.class).getComponentRewriter());
+                    tag(ProtocolVersion.v1_21_5, manager.getProtocol(Protocol1_21_4To1_21_5.class).getComponentRewriter());
+                    tag(ProtocolVersion.v1_21_6, manager.getProtocol(Protocol1_21_5To1_21_6.class).getComponentRewriter());
+                } catch (Throwable ignored) { }
+            }
+        }
+
+        private static <T extends com.viaversion.viaversion.api.rewriter.ComponentRewriter> void text(final @NotNull ProtocolVersion version, final @NotNull T rewriter) {
+            TEXT_REWRITER.put(version, rewriter::processText);
+        }
+
+        private static <T extends com.viaversion.viaversion.api.rewriter.ComponentRewriter> void tag(final @NotNull ProtocolVersion version, final @NotNull T rewriter) {
+            TAG_REWRITER.put(version, rewriter::processTag);
+        }
+
+        public static void processText(final @NotNull UserConnection connection, final @NotNull JsonElement element, final @NotNull ProtocolVersion to) {
+            processText(connection, element, Via.getAPI().getServerVersion().highestSupportedProtocolVersion(), to);
+        }
+
+        public static void processText(final @NotNull UserConnection connection, final @NotNull JsonElement element, final @NotNull ProtocolVersion from, final @NotNull ProtocolVersion to) {
+            for (Map.Entry<ProtocolVersion, BiConsumer<UserConnection, JsonElement>> entry : TEXT_REWRITER.entrySet()) {
+                if (from.newerThanOrEqualTo(entry.getKey())) {
+                    continue;
+                }
+                if (to.olderThan(entry.getKey())) {
+                    break;
+                }
+                entry.getValue().accept(connection, element);
+            }
+        }
+
+        public static void processTag(final @NotNull UserConnection connection, final @NotNull Tag tag, final @NotNull ProtocolVersion to) {
+            processTag(connection, tag, Via.getAPI().getServerVersion().highestSupportedProtocolVersion(), to);
+        }
+
+        public static void processTag(final @NotNull UserConnection connection, final @NotNull Tag tag, final @NotNull ProtocolVersion from, final @NotNull ProtocolVersion to) {
+            for (Map.Entry<ProtocolVersion, BiConsumer<UserConnection, Tag>> entry : TAG_REWRITER.entrySet()) {
+                if (from.newerThanOrEqualTo(entry.getKey())) {
+                    continue;
+                }
+                if (to.olderThan(entry.getKey())) {
+                    break;
+                }
+                entry.getValue().accept(connection, tag);
+            }
         }
     }
 
@@ -156,12 +268,10 @@ public class ViaFacet<V> extends FacetBase<V> implements Facet.Message<V, String
             }
         }
 
-        public @NotNull JsonElement parse(final @NotNull String message) {
-            return JsonParser.parseString(message);
-        }
-
         public void writeComponent(final @NotNull PacketWrapper packet, final @NotNull String message) {
-            packet.write(Types.COMPONENT, parse(message));
+            final JsonElement element = JsonParser.parseString(message);
+            ComponentRewriter.processText(packet.user(), element, this.minProtocol);
+            packet.write(Types.COMPONENT, element);
         }
     }
 
