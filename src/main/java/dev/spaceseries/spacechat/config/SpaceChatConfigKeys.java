@@ -78,6 +78,8 @@ public class SpaceChatConfigKeys {
 
     public static ConfigKey<List<String>> FAKE_PLAYERS = key(c -> c.getStringList("fake-players", List.of()));
 
+    public static ConfigKey<List<String>> CHAT_ESCAPE_COLOR = key(c -> c.getStringList("chat.escape-color", List.of()));
+
     public static ConfigKey<XSound> PRIVATE_NOTIFICATION_SOUND = key(c -> XSound.matchXSound(c.getString("private.notification.sound", "ENTITY_PLAYER_LEVELUP")).orElse(XSound.ENTITY_PLAYER_LEVELUP));
     public static ConfigKey<Long> PRIVATE_COOLDOWN = key(c -> c.getLong("private.cooldown", 2000L));
 

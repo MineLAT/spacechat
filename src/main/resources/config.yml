@@ -212,10 +212,18 @@ use-relational-placeholders: false
 fake-players:
   - "@console"
 
+# Chat messages configuration
+chat:
+  # Patterns in chat message without color
+  escape-color:
+    - '\\?\\?:(\S+?):'
+
 # Private messages configuration
 private:
   notification:
     sound: 'ENTITY_PLAYER_LEVELUP'
+  # Cooldown in milliseconds to send a private message
+  cooldown: 2000
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#
 # Permissions             #
