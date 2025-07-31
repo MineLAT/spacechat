@@ -33,21 +33,28 @@ public class ChatListener implements Listener {
         if (player == null) {
             return;
         }
-        Component result = escapeMiniMessage(event.result());
-        String message = SECTION_REPLACER.apply(MiniMessage.miniMessage().serialize(result), player);
-        if (player.hasPermission(SpaceChatConfigKeys.PERMISSIONS_USE_CHAT_COLORS.get(plugin.getSpaceChatConfig().getAdapter()))) {
-            // yes, the player has permission to use chat colors, so color message
-            if (message.contains("&")) {
+
+        final boolean useChatColor = player.hasPermission(SpaceChatConfigKeys.PERMISSIONS_USE_CHAT_COLORS.get(plugin.getSpaceChatConfig().getAdapter()));
+        final boolean useChatLinks = player.hasPermission(SpaceChatConfigKeys.PERMISSIONS_USE_CHAT_LINKS.get(plugin.getSpaceChatConfig().getAdapter()));
+        if (useChatColor || useChatLinks) {
+            Component result = escapeMiniMessage(event.result());
+            String message = SECTION_REPLACER.apply(MiniMessage.miniMessage().serialize(result), player);
+            boolean modified = false;
+
+            if (useChatColor && message.contains("&")) {
+                modified = true;
                 message = color(message);
             }
-        }
-        if (player.hasPermission(SpaceChatConfigKeys.PERMISSIONS_USE_CHAT_LINKS.get(plugin.getSpaceChatConfig().getAdapter()))) {
-            if (message.contains("http")) {
+
+            if (useChatLinks && message.contains("http")) {
+                modified = true;
                 message = urls(message);
             }
-        }
 
-        event.result(MiniMessage.miniMessage().deserialize(message));
+            if (modified) {
+                event.result(MiniMessage.miniMessage().deserialize(message));
+            }
+        }
     }
 
     private static Component escapeMiniMessage(Component component) {
