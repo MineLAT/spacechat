@@ -228,7 +228,7 @@ public class RedisServerStreamSyncService extends ServerStreamSyncService {
         final Player receiver;
 
         if (!consoleReceiver) {
-            receiver = Bukkit.getPlayer(messagePacket.getReceiverName());
+            receiver = Bukkit.getPlayerExact(messagePacket.getReceiverName());
             // return if the receiver is not online
             if (receiver == null) {
                 return;
