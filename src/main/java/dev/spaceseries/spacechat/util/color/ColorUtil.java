@@ -64,7 +64,7 @@ public class ColorUtil {
             }
             final char code = message.charAt(i + 1);
             final String name = COLOR_NAME.get(code);
-            if (name != null && AsyncPermission.check(player, permission + "." + name)) {
+            if (name != null && ((code < 'k' ? AsyncPermission.check(player, permission + ".all") : AsyncPermission.check(player, permission + ".special")) || AsyncPermission.check(player, permission + "." + name))) {
                 builder.append(mapper.apply(code, name));
                 i++;
             } else {
