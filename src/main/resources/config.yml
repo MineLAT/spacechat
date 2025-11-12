@@ -239,3 +239,4 @@ permissions:
   use-item-chat: "space.chat.item-chat"
   vanish-command: "space.chat.vanish"
   unlisted: "space.chat.unlisted"
+  color: "space.chat.color"

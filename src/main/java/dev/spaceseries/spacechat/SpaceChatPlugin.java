@@ -17,6 +17,7 @@ import dev.spaceseries.spacechat.listener.VanishListener;
 import dev.spaceseries.spacechat.logging.LogManagerImpl;
 import dev.spaceseries.spacechat.storage.StorageManager;
 import dev.spaceseries.spacechat.sync.ServerSyncServiceManager;
+import dev.spaceseries.spacechat.user.AsyncPermission;
 import dev.spaceseries.spacechat.user.UserManager;
 import dev.spaceseries.spacechat.util.version.VersionUtil;
 import org.bstats.bukkit.Metrics;
@@ -168,6 +169,9 @@ public final class SpaceChatPlugin extends JavaPlugin {
 
         // initialize commands
         new CommandManager(this);
+
+        // initialize async permission check
+        AsyncPermission.init(new AsyncPermission(this));
 
         // register chat listener
         this.getServer().getPluginManager().registerEvents(new ChatListener(this), this);

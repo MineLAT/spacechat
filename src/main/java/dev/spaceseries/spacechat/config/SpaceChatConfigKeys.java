@@ -62,6 +62,7 @@ public class SpaceChatConfigKeys {
     public static ConfigKey<String> PERMISSIONS_USE_CHAT_LINKS = key(c -> c.getString("permissions.use-chat-links", "space.chat.chatlinks"));
     public static ConfigKey<String> PERMISSIONS_VANISH_COMMAND = key(c -> c.getString("permissions.vanish-command", "space.chat.vanish"));
     public static ConfigKey<String> PERMISSIONS_UNLISTED = key(c -> c.getString("permissions.unlisted", "space.chat.unlisted"));
+    public static ConfigKey<String> PERMISSIONS_COLOR = key(c -> c.getString("permissions.color", "space.chat.color"));
 
     public static ConfigKey<Boolean> BROADCAST_USE_LANG_WRAPPER = key(c -> c.getBoolean("broadcast.use-lang-wrapper", false));
 
