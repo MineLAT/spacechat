@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'com.gradleup.shadow' version '9.2.2'
+    id 'com.gradleup.shadow' version '9.3.1'
 }
 
 allprojects {
@@ -20,26 +20,26 @@ allprojects {
         // bstats, caffeine, adventure, mysql-driver, hikaricp, jedis, configurate
         mavenCentral()
         // rtag
-        maven { url 'https://jitpack.io' }
+        maven { url = uri('https://jitpack.io') }
         // spigot
-        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-        maven { url 'https://oss.sonatype.org/content/repositories/central' }
+        maven { url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/') }
+        maven { url = uri('https://oss.sonatype.org/content/repositories/snapshots') }
+        maven { url = uri('https://oss.sonatype.org/content/repositories/central') }
         // localelib
-        maven { url 'https://repo.codemc.io/repository/maven-public/' }
+        maven { url = uri('https://repo.codemc.io/repository/maven-public/') }
         // viaversion
-        maven { url 'https://repo.viaversion.com' }
+        maven { url = uri('https://repo.viaversion.com') }
         // protocollib
-        maven { url 'https://repo.dmulloy2.net/repository/public/' }
+        maven { url = uri('https://repo.dmulloy2.net/repository/public/') }
         // essentials
-        maven { url 'https://repo.essentialsx.net/releases/' }
+        maven { url = uri('https://repo.essentialsx.net/releases/') }
         // triumph-msg
-        maven { url 'https://repo.triumphteam.dev/snapshots/' }
+        maven { url = uri('https://repo.triumphteam.dev/snapshots/') }
         // acf
-        maven { url 'https://repo.aikar.co/content/groups/aikar/' }
+        maven { url = uri('https://repo.aikar.co/content/groups/aikar/') }
         // placeholderapi
         maven {
-            url 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+            url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/')
             content {
                 includeGroup 'me.clip'
             }
