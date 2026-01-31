@@ -63,6 +63,8 @@ public class SpaceChatConfigKeys {
     public static ConfigKey<String> PERMISSIONS_VANISH_COMMAND = key(c -> c.getString("permissions.vanish-command", "space.chat.vanish"));
     public static ConfigKey<String> PERMISSIONS_UNLISTED = key(c -> c.getString("permissions.unlisted", "space.chat.unlisted"));
     public static ConfigKey<String> PERMISSIONS_COLOR = key(c -> c.getString("permissions.color", "space.chat.color"));
+    public static ConfigKey<String> PERMISSIONS_MENTION_SEND = key(c -> c.getString("permissions.mention-send", "space.chat.mention.send"));
+    public static ConfigKey<String> PERMISSIONS_MENTION_RECEIVE = key(c -> c.getString("permissions.mention-receive", "space.chat.mention.receive"));
 
     public static ConfigKey<Boolean> BROADCAST_USE_LANG_WRAPPER = key(c -> c.getBoolean("broadcast.use-lang-wrapper", false));
 
@@ -80,8 +82,10 @@ public class SpaceChatConfigKeys {
     public static ConfigKey<List<String>> FAKE_PLAYERS = key(c -> c.getStringList("fake-players", List.of()));
 
     public static ConfigKey<List<String>> CHAT_ESCAPE_COLOR = key(c -> c.getStringList("chat.escape-color", List.of()));
+    public static ConfigKey<Boolean> CHAT_MENTION_ENABLED = key(c -> c.getBoolean("chat.mention.enabled", true));
+    public static ConfigKey<XSound.Record> CHAT_MENTION_SOUND = key(c -> XSound.parse(c.getString("private.notification.sound", "ENTITY_EXPERIENCE_ORB_PICKUP, 3, 1")));
 
-    public static ConfigKey<XSound> PRIVATE_NOTIFICATION_SOUND = key(c -> XSound.matchXSound(c.getString("private.notification.sound", "ENTITY_PLAYER_LEVELUP")).orElse(XSound.ENTITY_PLAYER_LEVELUP));
+    public static ConfigKey<XSound> PRIVATE_NOTIFICATION_SOUND = key(c -> XSound.of(c.getString("private.notification.sound", "ENTITY_PLAYER_LEVELUP")).orElse(XSound.ENTITY_PLAYER_LEVELUP));
     public static ConfigKey<Long> PRIVATE_COOLDOWN = key(c -> c.getLong("private.cooldown", 2000L));
 
     private static final List<SimpleConfigKey<?>> KEYS = KeyedConfiguration.initialise(SpaceChatConfigKeys.class);

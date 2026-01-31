@@ -31,8 +31,6 @@ allprojects {
         maven { url = uri('https://repo.viaversion.com') }
         // essentials
         maven { url = uri('https://repo.essentialsx.net/releases/') }
-        // triumph-msg
-        maven { url = uri('https://repo.triumphteam.dev/snapshots/') }
         // acf
         maven { url = uri('https://repo.aikar.co/content/groups/aikar/') }
         // placeholderapi

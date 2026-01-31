@@ -190,6 +190,17 @@ public class RedisServerStreamSyncService extends ServerStreamSyncService {
         // send to all players filtering ignored players from sender
         chatManager.sendComponentChatMessage(chatPacket.getSenderName(), chatPacket.getParsedFormat());
 
+        // mention players
+        for (String name : chatPacket.getMentionedPlayers()) {
+            final Player player = Bukkit.getPlayerExact(name);
+            if (player != null) {
+                final List<String> ignored = plugin.getUserManager().getIgnoredList(name);
+                if (!ignored.contains(chatPacket.getSenderName())) {
+                    plugin.getUserManager().mentionReceive(chatPacket.getSenderName(), player);
+                }
+            }
+        }
+
         // send to all players
         //chatManager.sendComponentChatMessage(chatPacket.getComponent());
     }
