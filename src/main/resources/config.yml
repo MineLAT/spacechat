@@ -149,6 +149,9 @@ item-chat:
   # This dictates the maximum amount of times that players can use the item-chat feature in a single message
   # Set to -1 to disable the maximum amount
   max-per-message: 2
+  # The maximum amount of characters that item name can contain
+  # Set to -1 disable this restriction
+  max-characters: 20
   # Whitelist item NBT tag
   # If a tag path ends with ".[]" means that contains more items inside
   allowed-tags:

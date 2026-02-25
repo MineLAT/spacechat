@@ -11,6 +11,7 @@ import dev.spaceseries.spacechat.SpaceChatPlugin;
 import dev.spaceseries.spacechat.api.config.generic.adapter.ConfigurationAdapter;
 import dev.spaceseries.spacechat.config.SpaceChatConfigKeys;
 import dev.spaceseries.spacechat.parser.Parser;
+import dev.spaceseries.spacechat.util.ComponentClamp;
 import me.pikamug.localelib.LocaleManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
@@ -119,6 +120,9 @@ public class ItemChatParser extends Parser {
         Component name = itemStack.hasItemMeta() ?
                 Objects.requireNonNull(itemStack.getItemMeta()).hasDisplayName() ? LegacyComponentSerializer.legacySection().deserialize(itemStack.getItemMeta().getDisplayName()) : Component.translatable(itemKey, fallback) :
                 Component.translatable(itemKey, fallback);
+
+        // clamp name length
+        name = ComponentClamp.clamp(name, SpaceChatConfigKeys.ITEM_CHAT_MAX_CHARACTERS.get(configuration));
 
         // replacement config for %item% and %amount%
         TextReplacementConfig nameReplacementConfig = TextReplacementConfig.builder()
