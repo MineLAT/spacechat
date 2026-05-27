@@ -43,18 +43,17 @@ public class ComponentClamp {
 
         if (component instanceof TextComponent) {
             String content = ((TextComponent) component).content();
-            int remaining = this.maxLength - this.count;
 
+            int remaining = this.maxLength - this.count;
             if (content.length() > remaining) {
                 content = content.substring(0, remaining) + "...";
+                component = ((TextComponent) component).content(content);
             }
 
             this.count += content.length();
-
-            return Component.text(content, component.style());
         }
 
-        if (component.children().isEmpty()) {
+        if (this.count >= this.maxLength || component.children().isEmpty()) {
             return component;
         }
 
@@ -62,7 +61,9 @@ public class ComponentClamp {
         Component result = component.children(List.of());
 
         for (Component child : children) {
-            if (this.count >= this.maxLength) break;
+            if (this.count >= this.maxLength) {
+                break;
+            }
             result = result.append(run(child));
         }
 
