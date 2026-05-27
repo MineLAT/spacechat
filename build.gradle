@@ -19,8 +19,6 @@ allprojects {
     repositories {
         // bstats, caffeine, adventure, mysql-driver, hikaricp, jedis, configurate, protocollib
         mavenCentral()
-        // rtag
-        maven { url = uri('https://jitpack.io') }
         // spigot
         maven { url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/') }
         maven { url = uri('https://oss.sonatype.org/content/repositories/snapshots') }
@@ -40,6 +38,8 @@ allprojects {
                 includeGroup 'me.clip'
             }
         }
+        // rtag
+        maven { url = uri('https://jitpack.io') }
     }
 
     configurations {
@@ -121,7 +121,6 @@ allprojects {
         relocate 'com.zaxxer.hikari', project.group + '.lib.hikari'
         relocate 'org.spongepowered.configurate', project.group + '.lib.configurate'
         relocate 'me.pikamug.localelib', project.group + '.lib.localelib'
-        relocate 'com.saicone.rtag', project.group + '.lib.rtag'
         relocate 'com.cryptomorin.xseries', project.group + '.lib.xseries'
     }
 }
