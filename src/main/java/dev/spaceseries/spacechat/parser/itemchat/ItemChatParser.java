@@ -30,7 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 @Dependencies({
-        @Dependency(value = "me.pikamug.localelib:LocaleLib:4.1.3",
+        @Dependency(value = "me.pikamug.localelib:LocaleLib:4.1.5",
                 repository = @Repository(url = "https://repo.codemc.io/repository/maven-public"),
                 relocate = {"me.pikamug.localelib", "{package}.lib.localelib"}
         )

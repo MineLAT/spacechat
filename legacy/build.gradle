@@ -2,7 +2,7 @@ dependencies {
     // Compile
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
 
-    compileOnly 'com.viaversion:viaversion-common:5.7.0'
+    compileOnly 'com.viaversion:viaversion-common:5.11.0'
 
     implementation 'net.kyori:adventure-api:4.26.1'
     implementation('net.kyori:adventure-platform-bukkit:4.4.1') {

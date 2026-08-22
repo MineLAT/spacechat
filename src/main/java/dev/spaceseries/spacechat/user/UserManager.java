@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-@Dependency(value = "com.github.ben-manes.caffeine:caffeine:3.2.3", relocate = {"com.github.benmanes.caffeine.cache", "{package}.lib.caffeine"})
+@Dependency(value = "com.github.ben-manes.caffeine:caffeine:3.2.4", relocate = {"com.github.benmanes.caffeine.cache", "{package}.lib.caffeine"})
 public class UserManager implements Manager {
 
     private final SpaceChatPlugin plugin;
