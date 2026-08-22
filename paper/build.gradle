@@ -1,3 +1,5 @@
+import org.gradle.api.attributes.java.TargetJvmVersion
+
 repositories {
     // paper
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') }
@@ -11,14 +13,21 @@ processResources {
     }
 }
 
+configurations.all {
+    if (canBeResolved) {
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+        }
+    }
+}
+
 dependencies {
     // Compile
     compileOnly 'io.papermc.paper:paper-api:26.2.build.112-stable'
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
 }
 
 shadowJar {
