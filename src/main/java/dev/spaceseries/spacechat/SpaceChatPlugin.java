@@ -19,8 +19,8 @@ import dev.spaceseries.spacechat.storage.StorageManager;
 import dev.spaceseries.spacechat.sync.ServerSyncServiceManager;
 import dev.spaceseries.spacechat.user.AsyncPermission;
 import dev.spaceseries.spacechat.user.UserManager;
-import dev.spaceseries.spacechat.util.version.VersionUtil;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -186,7 +186,7 @@ public final class SpaceChatPlugin extends JavaPlugin {
         new Metrics(this, 7508);
 
         // log initialization method
-        this.getLogger().info("Detected that SpaceChat is running under " + VersionUtil.getServerBukkitVersion().toString());
+        this.getLogger().info("Detected that SpaceChat is running under " + Bukkit.getServer().getBukkitVersion());
 
         // initialize file watcher
         // new FileWatcher(this);
