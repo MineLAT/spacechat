@@ -7,7 +7,7 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(sourceSets.main.resources.srcDirs) {
         include 'paper-plugin.yml'
-        expand(project.properties)
+        expand(version: project.version)
     }
 }
 
