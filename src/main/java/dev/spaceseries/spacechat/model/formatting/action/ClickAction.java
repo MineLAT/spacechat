@@ -53,11 +53,19 @@ public class ClickAction {
      * @return The click event
      */
     public ClickEvent toClickEvent(Player player) {
-        // parse action
-        ClickEvent.Action action = ClickEvent.Action.valueOf(clickActionType.toString().toUpperCase());
+        try {
+            // parse action
+            ClickEvent.Action action = ClickEvent.Action.NAMES.value(clickActionType.toString().toLowerCase());
 
-        // build & return
-        return ClickEvent.clickEvent(action, PlaceholderAPI.setPlaceholders(player, value));
+            // build & return
+            return ClickEvent.clickEvent(action, ClickEvent.Payload.string(PlaceholderAPI.setPlaceholders(player, value)));
+        } catch (Throwable t) {
+            // parse action
+            ClickEvent.Action action = ClickEvent.Action.valueOf(clickActionType.toString().toUpperCase());
+
+            // build & return
+            return ClickEvent.clickEvent(action, PlaceholderAPI.setPlaceholders(player, value));
+        }
     }
 
     /**
@@ -70,15 +78,27 @@ public class ClickAction {
      * @return The click event
      */
     public ClickEvent toClickEventRelational(Player player, Player player2) {
-        // parse action
-        ClickEvent.Action action = ClickEvent.Action.valueOf(clickActionType.toString().toUpperCase());
+        try {
+            // parse action
+            ClickEvent.Action action = ClickEvent.Action.NAMES.value(clickActionType.toString().toUpperCase());
 
-        String text = SECTION_REPLACER.apply(PlaceholderAPI.setPlaceholders(player, AMPERSAND_REPLACER.apply(value, player)), player);
-        // set relational placeholders
-        text = PlaceholderAPI.setRelationalPlaceholders(player, player2, text);
+            String text = SECTION_REPLACER.apply(PlaceholderAPI.setPlaceholders(player, AMPERSAND_REPLACER.apply(value, player)), player);
+            // set relational placeholders
+            text = PlaceholderAPI.setRelationalPlaceholders(player, player2, text);
 
-        // build & return
-        return ClickEvent.clickEvent(action, text);
+            // build & return
+            return ClickEvent.clickEvent(action, ClickEvent.Payload.string(text));
+        } catch (Throwable t) {
+            // parse action
+            ClickEvent.Action action = ClickEvent.Action.valueOf(clickActionType.toString().toUpperCase());
+
+            String text = SECTION_REPLACER.apply(PlaceholderAPI.setPlaceholders(player, AMPERSAND_REPLACER.apply(value, player)), player);
+            // set relational placeholders
+            text = PlaceholderAPI.setRelationalPlaceholders(player, player2, text);
+
+            // build & return
+            return ClickEvent.clickEvent(action, text);
+        }
     }
 
     /**
